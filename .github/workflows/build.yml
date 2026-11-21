@@ -45,5 +45,5 @@ jobs:
         with:
           name: helotyclient-win32
           path: out
-          build/*.exe
-          build/*.dll
+            build/*.exe
+            build/*.dll
