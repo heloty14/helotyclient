@@ -69,6 +69,8 @@
 #include "components/statboard.h"
 #include "components/touch_controls.h"
 #include "components/voting.h"
+#include "components/heloty_menu.h"
+
 
 #include <memory>
 #include <vector>
