@@ -163,6 +163,7 @@ void CGameClient::OnConsoleInit()
 					      &m_Statboard,
 					      &m_Motd,
 					      &m_Menus,
+						  &m_HelotyMenu,
 					      &m_KeyBinder,
 					      &m_GameConsole,
 					      &m_MenuBackground});
@@ -178,6 +179,7 @@ void CGameClient::OnConsoleInit()
 						  &m_Emoticon,
 						  &m_ImportantAlert,
 						  &m_Menus,
+						  &m_HelotyMenu,
 						  &m_Controls,
 						  &m_TouchControls,
 						  &m_Binds});
