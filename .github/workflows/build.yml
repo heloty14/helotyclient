@@ -37,8 +37,8 @@ jobs:
             cmake -S . -B build -G Ninja -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_BUILD_TYPE=Release -DSERVER=OFF -DTOOLS=OFF -DTEST=OFF
           fi
 
-      - name: Build
-        run: cmake --build build -j2
+      - name: collect files
+        run: mkdir -p out && cp build/*.exe build/*.dll out/
 
       - name: Upload
         uses: actions/upload-artifact@v4
