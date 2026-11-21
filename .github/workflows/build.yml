@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install tools
-        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build mingw-w64 python3
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build mingw-w64 python3 && sudo update-alternatives --set i686-w64-mingw32-gcc /usr/bin/i686-w64-mingw32-gcc-posix && sudo update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
 
       - name: Get ddnet-libs
         run: if [ ! -d ddnet-libs/sdl ]; then rm -rf ddnet-libs; git clone --depth 1 https://github.com/ddnet/ddnet-libs.git ddnet-libs; fi
