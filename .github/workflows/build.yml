@@ -10,16 +10,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake ninja-build mingw-w64 python3
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build mingw-w64 python3
 
       - name: Get ddnet-libs
-        run: |
-          if [ ! -d ddnet-libs/sdl ]; then
-            rm -rf ddnet-libs
-            git clone --depth 1 https://github.com/ddnet/ddnet-libs.git ddnet-libs
-          fi
+        run: if [ ! -d ddnet-libs/sdl ]; then rm -rf ddnet-libs; git clone --depth 1 https://github.com/ddnet/ddnet-libs.git ddnet-libs; fi
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
@@ -28,22 +22,20 @@ jobs:
           targets: i686-pc-windows-gnu
 
       - name: Configure
-        run: |
-          export CC=i686-w64-mingw32-gcc-posix
-          export CXX=i686-w64-mingw32-g++-posix
-          if [ -f cmake/toolchains/mingw32.toolchain ]; then
-            cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/mingw32.toolchain -DCMAKE_BUILD_TYPE=Release -DSERVER=OFF -DTOOLS=OFF -DTEST=OFF
-          else
-            cmake -S . -B build -G Ninja -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_BUILD_TYPE=Release -DSERVER=OFF -DTOOLS=OFF -DTEST=OFF
-          fi
+        run: export CC=i686-w64-mingw32-gcc-posix CXX=i686-w64-mingw32-g++-posix && cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/mingw32.toolchain -DCMAKE_BUILD_TYPE=Release -DSERVER=OFF -DTOOLS=OFF -DTEST=OFF
 
-      - name: collect files
-        run: mkdir -p out && cp build/*.exe build/*.dll out/
+      - name: Build
+        run: cmake --build build -j4
+
+      - name: Find output
+        run: find build -name "*.exe" -o -name "*.dll" | head -50
+
+      - name: Collect files
+        run: mkdir -p out && find build -maxdepth 2 \( -name "*.exe" -o -name "*.dll" \) -exec cp {} out/ \; ; cp -r data out/data ; ls out
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: helotyclient-win32
           path: out
-            build/*.exe
-            build/*.dll
+          if-no-files-found: warn
