@@ -49,8 +49,8 @@ bool CHelotyMenu::OnCursorMove(float x, float y, IInput::ECursorType CursorType)
 	m_MousePos += vec2(x, y);
 
 	const CUIRect *pScreen = Ui()->Screen();
-	m_MousePos.x = clamp(m_MousePos.x, 0.0f, pScreen->w);
-	m_MousePos.y = clamp(m_MousePos.y, 0.0f, pScreen->h);
+	m_MousePos.x = std::clamp(m_MousePos.x, 0.0f, pScreen->w);
+	m_MousePos.y = std::clamp(m_MousePos.y, 0.0f, pScreen->h);
 	return true;
 }
 
