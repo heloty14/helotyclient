@@ -27,6 +27,9 @@ jobs:
       - name: Build
         run: cmake --build build -j4 -- -k 0 || (cmake --build build -j1 -- -k 0 2>&1 | grep -B2 -A6 "error" | head -200; exit 1)
 
+      - name: Show CComponent
+        run: grep -n "virtual" src/game/client/component.h
+        
       - name: Collect files
         run: mkdir -p out && find build -maxdepth 2 \( -name "*.exe" -o -name "*.dll" \) -exec cp {} out/ \; ; cp -r data out/data ; ls out
 
