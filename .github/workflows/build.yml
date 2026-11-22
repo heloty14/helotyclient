@@ -38,7 +38,10 @@ jobs:
 
       - name: Collect files
         run: mkdir -p out && find build -maxdepth 2 \( -name "*.exe" -o -name "*.dll" \) -exec cp {} out/ \; ; cp -r data out/data ; ls out
-
+        
+      - name: Check Win8 imports 
+        run: for f in out/*.exe out/*.dll; do echo "== $f"; i686-w64-mingw32-objdump -p "$f" | grep -i "api-ms-win" ; done ; true
+        
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
