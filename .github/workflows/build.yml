@@ -39,8 +39,11 @@ jobs:
       - name: Collect files
         run: mkdir -p out && find build -maxdepth 2 \( -name "*.exe" -o -name "*.dll" \) -exec cp {} out/ \; ; cp -r data out/data ; ls out
         
-      - name: Check Win8 imports 
-        run: for f in out/*.exe out/*.dll; do echo "== $f"; i686-w64-mingw32-objdump -p "$f" | grep -i "api-ms-win" ; done ; true
+      - name: Check Win8 imports
+        run: for f in out/*.exe out/*.dll; do echo "== $f"; i686-w64-mingw32-objdump -p "$f" | grep -i "api-ms-win" || true; done
+
+      - name: Find who uses WaitOnAddress
+        run: i686-w64-mingw32-objdump -p out/DDNet.exe | grep -i -A8 "api-ms-win-core-synch" || true ; for f in build/i686-win7-windows-gnu/release/*.a /usr/lib/gcc/i686-w64-mingw32/13-posix/*.a /usr/i686-w64-mingw32/lib/*.a; do if i686-w64-mingw32-nm "$f" 2>/dev/null | grep -q WaitOnAddress; then echo "USES $f"; fi; done
         
       - name: Upload
         uses: actions/upload-artifact@v4
