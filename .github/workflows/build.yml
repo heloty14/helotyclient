@@ -8,6 +8,10 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       CARGO_UNSTABLE_BUILD_STD: std,panic_abort
+      CC_i686_win7_windows_gnu: i686-w64-mingw32-gcc-posix
+      CXX_i686_win7_windows_gnu: i686-w64-mingw32-g++-posix
+      AR_i686_win7_windows_gnu: i686-w64-mingw32-ar
+      CARGO_TARGET_I686_WIN7_WINDOWS_GNU_LINKER: i686-w64-mingw32-g++-posix
     steps:
       - uses: actions/checkout@v4
 
