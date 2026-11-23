@@ -81,6 +81,7 @@ static const CHelotyTheme gs_aThemes[] = {
 	{"Red", 0.95f, 0.25f, 0.25f},
 	{"Purple", 0.65f, 0.35f, 0.95f},
 };
+static const int NUM_THEMES = sizeof(gs_aThemes) / sizeof(gs_aThemes);
 static const float gs_aScales[] = {0.8f, 1.0f, 1.25f, 1.5f};
 static const int NUM_SCALES = 4;
 static const float gs_aOpacity[] = {0.6f, 0.75f, 0.92f, 1.0f};
@@ -466,7 +467,7 @@ void CHelotyWorld::OnRender()
 
 void CHelotyMenu::DrawMenu()
 {
-	const CTheme &T = gs_aThemes[m_Theme];
+	const CHelotyTheme &T = gs_aThemes[m_Theme];
 	const float Op = gs_aOpacity[m_OpacityIdx];
 	const float Now = Client()->LocalTime();
 
