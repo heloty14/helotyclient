@@ -81,8 +81,6 @@ static const CHelotyTheme gs_aThemes[] = {
 	{"Red", 0.95f, 0.25f, 0.25f},
 	{"Purple", 0.65f, 0.35f, 0.95f},
 };
-static const int NUM_THEMES = sizeof(gs_aThemes) / sizeof(gs_aThemes[0]);
-static const int NUM_THEMES = 6;
 static const float gs_aScales[] = {0.8f, 1.0f, 1.25f, 1.5f};
 static const int NUM_SCALES = 4;
 static const float gs_aOpacity[] = {0.6f, 0.75f, 0.92f, 1.0f};
