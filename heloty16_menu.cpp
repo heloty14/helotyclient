@@ -74,7 +74,14 @@ struct CHelotyTheme
 	float m_R, m_G, m_B;
 };
 static const CHelotyTheme gs_aThemes[] = {
+	{"Blue", 0.25f, 0.55f, 1.0f},
+	{"Green", 0.25f, 0.80f, 0.45f},
+	{"Orange", 1.0f, 0.60f, 0.15f},
+	{"Pink", 1.0f, 0.40f, 0.70f},
+	{"Red", 0.95f, 0.25f, 0.25f},
+	{"Purple", 0.65f, 0.35f, 0.95f},
 };
+static const int NUM_THEMES = sizeof(gs_aThemes) / sizeof(gs_aThemes[0]);
 static const int NUM_THEMES = 6;
 static const float gs_aScales[] = {0.8f, 1.0f, 1.25f, 1.5f};
 static const int NUM_SCALES = 4;
