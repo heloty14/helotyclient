@@ -68,18 +68,12 @@ static const float ROW_H = 14.0f;
 static const float SCREEN_H = 300.0f;
 
 // цветовые темы меню
-struct CTheme
+struct CHelotyTheme
 {
 	const char *m_pName;
 	float m_R, m_G, m_B;
 };
-static const CTheme gs_aThemes[] = {
-	{"Purple", 0.54f, 0.36f, 1.0f},
-	{"Red", 0.92f, 0.22f, 0.27f},
-	{"Blue", 0.25f, 0.55f, 1.0f},
-	{"Green", 0.25f, 0.80f, 0.45f},
-	{"Orange", 1.0f, 0.60f, 0.15f},
-	{"Pink", 1.0f, 0.40f, 0.70f},
+static const CHelotyTheme gs_aThemes[] = {
 };
 static const int NUM_THEMES = 6;
 static const float gs_aScales[] = {0.8f, 1.0f, 1.25f, 1.5f};
