@@ -21,32 +21,28 @@ namespace FeatureKogHelper
 		if(!s_Enabled)
 			return;
 
-		CGameClient *pClient = Menu.m_pClient;
+		CGameClient *pClient = Menu.GameClient();
 		if(!pClient || !pClient->m_Snap.m_pLocalCharacter)
 			return;
 
 		const CNetObj_Character *pChar = pClient->m_Snap.m_pLocalCharacter;
 		const int CurWeapon = pChar->m_Weapon;
 
-		// Читаем текущее состояние кнопки атаки из контролов клиента
-		const int Fire = pClient->m_Controls.m_InputData[g_Config.m_ClDummy].m_Fire;
+		const int Fire = pClient->m_Controls.m_aInputData[g_Config.m_ClDummy].m_Fire;
 		const bool FirePressed = (Fire & 1) != 0 && (s_LastFire & 1) == 0;
 		const bool FireHeld = (Fire & 1) != 0;
 		s_LastFire = Fire;
 
-		// 1. Игрок нажал атаку, держа НЕ молот (WEAPON_HAMMER == 0) и НЕ ниндзю (WEAPON_NINJA == 5)
 		if(FirePressed && CurWeapon != WEAPON_HAMMER && CurWeapon != WEAPON_NINJA && !s_Swapped)
 		{
 			s_LastWeapon = CurWeapon;
 			s_Swapped = true;
-			s_ReturnTimer = 0.14f; // задержка на срабатывание удара молотом (~140 мс)
+			s_ReturnTimer = 0.14f;
 
-			// Переключаем на молот (в консоли DDNet: +weapon 1 — молот, +weapon 2 — пистолет и т.д.)
 			Menu.Exec("+weapon 1");
 			return;
 		}
 
-		// 2. Возвращаем прошлое оружие после удара и отпускания кнопки огня
 		if(s_Swapped)
 		{
 			if(s_ReturnTimer > 0.0f)
