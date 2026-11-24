@@ -14,7 +14,7 @@ namespace FeatureArrows
 		if(!s_Enabled)
 			return;
 
-		CGameClient *pClient = Menu.m_pClient;
+		CGameClient *pClient = Menu.GameClient();
 		if(!pClient)
 			return;
 
@@ -23,7 +23,7 @@ namespace FeatureArrows
 			return;
 
 		const int LocalId = pClient->m_Snap.HELOTY_LOCAL_ID;
-		const float OrbitRadius = 56.0f; // радиус кольца вокруг вашего ти
+		const float OrbitRadius = 56.0f;
 		const float ArrowSize = 7.0f;
 
 		IGraphics *pGfx = Menu.Gfx();
@@ -43,25 +43,21 @@ namespace FeatureArrows
 			const vec2 Delta = TargetPos - MyPos;
 			const float Dist = length(Delta);
 
-			// Не рисуем стрелку, если игрок стоит совсем вплотную
 			if(Dist < 90.0f)
 				continue;
 
 			const vec2 Dir = Delta / Dist;
 			const vec2 Perp(-Dir.y, Dir.x);
 
-			// Позиция кончика стрелки на орбите вокруг нашего ти
 			const vec2 Tip = MyPos + Dir * (OrbitRadius + ArrowSize);
 			const vec2 Base = MyPos + Dir * OrbitRadius;
 			const vec2 Left = Base + Perp * (ArrowSize * 0.65f);
 			const vec2 Right = Base - Perp * (ArrowSize * 0.65f);
 
-			// Цвет: красный/оранжевый если близко, голубой если далеко
 			const float NearFactor = std::max(0.0f, std::min(1.0f, 1.0f - (Dist - 150.0f) / 1400.0f));
 			const float Alpha = 0.45f + NearFactor * 0.45f;
 			pGfx->SetColor(0.25f + NearFactor * 0.75f, 0.85f - NearFactor * 0.55f, 1.0f - NearFactor * 0.75f, Alpha);
 
-			// В DDNet 16.5 треугольник рисуется через CFreeformItem с дублированием 4-й вершины
 			IGraphics::CFreeformItem Tri(
 				Tip.x, Tip.y,
 				Left.x, Left.y,
