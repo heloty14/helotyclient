@@ -11,16 +11,13 @@ namespace FeatureKeystrokes
 
 	static void DrawKey(CHelotyMenu &Menu, float x, float y, float w, float h, const char *pLabel, bool Active)
 	{
-		// Фон клавиши
 		if(Active)
 			Menu.Rect(x, y, w, h, 0.25f, 0.65f, 1.0f, 0.85f);
 		else
 			Menu.Rect(x, y, w, h, 0.08f, 0.09f, 0.12f, 0.65f);
 
-		// Тонкая верхняя рамка
 		Menu.Rect(x, y, w, 1.0f, Active ? 0.8f : 0.35f, Active ? 0.95f : 0.4f, 1.0f, 0.8f);
 
-		// Текст по центру клавиши
 		const float FontSize = 6.5f;
 		const float TextX = x + w * 0.5f - (float)str_length(pLabel) * FontSize * 0.28f;
 		const float TextY = y + (h - FontSize) * 0.5f - 1.0f;
@@ -32,11 +29,11 @@ namespace FeatureKeystrokes
 		if(!s_Enabled)
 			return;
 
-		CGameClient *pClient = Menu.m_pClient;
+		CGameClient *pClient = Menu.GameClient();
 		if(!pClient)
 			return;
 
-		const CNetObj_PlayerInput &Input = pClient->m_Controls.m_InputData[g_Config.m_ClDummy];
+		const CNetObj_PlayerInput &Input = pClient->m_Controls.m_aInputData[g_Config.m_ClDummy];
 		const bool Left = Input.m_Direction < 0;
 		const bool Right = Input.m_Direction > 0;
 		const bool Jump = Input.m_Jump != 0;
@@ -50,19 +47,16 @@ namespace FeatureKeystrokes
 		const float KeyH = 16.0f;
 		const float Gap = 2.0f;
 
-		// Ряд 1: A | JUMP | D
 		DrawKey(Menu, BaseX, BaseY, KeyW, KeyH, "A", Left);
 		DrawKey(Menu, BaseX + KeyW + Gap, BaseY, KeyW * 1.4f, KeyH, "JUMP", Jump);
 		DrawKey(Menu, BaseX + KeyW * 2.4f + Gap * 2.0f, BaseY, KeyW, KeyH, "D", Right);
 
-		// Ряд 2: LMB (Fire) | RMB (Hook)
 		const float Row2Y = BaseY + KeyH + Gap;
 		const float TotalW = KeyW * 3.4f + Gap * 2.0f;
 		const float HalfW = (TotalW - Gap) * 0.5f;
 		DrawKey(Menu, BaseX, Row2Y, HalfW, KeyH - 2.0f, "LMB", Fire);
 		DrawKey(Menu, BaseX + HalfW + Gap, Row2Y, HalfW, KeyH - 2.0f, "RMB", Hook);
 
-		// Ряд 3: Спидометр (скорость в тайлах/сек)
 		const float Row3Y = Row2Y + (KeyH - 2.0f) + Gap;
 		Menu.Rect(BaseX, Row3Y, TotalW, 13.0f, 0.08f, 0.09f, 0.12f, 0.65f);
 
