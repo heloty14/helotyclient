@@ -26,7 +26,7 @@ namespace FeatureTeeAura
 		if(!s_Enabled)
 			return;
 
-		CGameClient *pClient = Menu.m_pClient;
+		CGameClient *pClient = Menu.GameClient();
 		if(!pClient || !pClient->m_Snap.m_pLocalCharacter)
 			return;
 
@@ -38,14 +38,13 @@ namespace FeatureTeeAura
 		const float Now = Menu.Time();
 		const CNetObj_Character *pChar = pClient->m_Snap.m_pLocalCharacter;
 
-		// Отслеживаем момент прыжка (m_Jumped меняет биты при дабл-джампе)
 		if(pChar->m_Jumped != s_LastJumped)
 		{
 			s_LastJumped = pChar->m_Jumped;
 			for(int i = 0; i < 14; i++)
 			{
 				CSpark Sp;
-				const float Angle = (Menu.Rnd() * 140.0f + 20.0f) * (pi / 180.0f); // веер вниз
+				const float Angle = (Menu.Rnd() * 140.0f + 20.0f) * (pi / 180.0f);
 				const float Spd = 60.0f + Menu.Rnd() * 140.0f;
 				Sp.m_Pos = Pos + vec2((Menu.Rnd() - 0.5f) * 14.0f, 12.0f);
 				Sp.m_Vel = vec2(cosf(Angle) * Spd * (Menu.Rnd() > 0.5f ? 1.0f : -1.0f), sinf(Angle) * Spd);
@@ -60,7 +59,6 @@ namespace FeatureTeeAura
 		pGfx->TextureClear();
 		pGfx->QuadsBegin();
 
-		// 1. Вращающаяся неоновая аура из 24 сегментов вокруг ти
 		const int Segments = 24;
 		const float Radius = 28.0f + sinf(Now * 4.0f) * 2.0f;
 		for(int i = 0; i < Segments; i++)
@@ -69,7 +67,6 @@ namespace FeatureTeeAura
 			const float Angle = T * 2.0f * pi + Now * 2.5f;
 			const vec2 Pt = Pos + vec2(cosf(Angle), sinf(Angle)) * Radius;
 
-			// Плавный перелив цвета по кругу
 			const float Wave = 0.5f + 0.5f * sinf(T * 2.0f * pi + Now * 3.0f);
 			pGfx->SetColor(0.25f + 0.65f * Wave, 0.75f - 0.35f * Wave, 1.0f, 0.75f);
 
@@ -78,7 +75,6 @@ namespace FeatureTeeAura
 			pGfx->QuadsDrawTL(&Dot, 1);
 		}
 
-		// 2. Обновляем и рисуем искры прыжка
 		for(size_t i = 0; i < s_vSparks.size();)
 		{
 			CSpark &Sp = s_vSparks[i];
