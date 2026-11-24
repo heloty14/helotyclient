@@ -1,4 +1,4 @@
-// feature_target_hud.h — Target HUD в стиле Minecraft-клиентов (обводка цели, траектория и карточка в тайлах) для DDNet 16.5
+// feature_target_hud.h — Target HUD в стиле Minecraft-клиентов (DDNet 16.5)
 
 namespace FeatureTargetHud
 {
@@ -13,7 +13,6 @@ namespace FeatureTargetHud
 		s_SmoothDistTiles = 0.0f;
 	}
 
-	// Поиск лучшей цели (приоритет: игрок ближе всего к линии прицела в пределах 1200px, либо ближайший к нам)
 	static int FindTarget(CGameClient *pClient, vec2 MyPos, vec2 AimDir)
 	{
 		const int LocalId = pClient->m_Snap.HELOTY_LOCAL_ID;
@@ -34,9 +33,8 @@ namespace FeatureTargetHud
 			if(Dist < 1.0f || Dist > 1600.0f)
 				continue;
 
-			// Угол отклонения от нашего прицела (чтобы таргетить того, на кого смотрим)
 			const vec2 Dir = Delta / Dist;
-			const float Dot = dot(AimDir, Dir); // от -1 до 1 (1 = прямо по прицелу)
+			const float Dot = dot(AimDir, Dir);
 			const float AnglePenalty = (1.0f - Dot) * 450.0f;
 			const float Score = Dist + AnglePenalty;
 
@@ -55,7 +53,7 @@ namespace FeatureTargetHud
 		if(!s_Enabled)
 			return;
 
-		CGameClient *pClient = Menu.m_pClient;
+		CGameClient *pClient = Menu.GameClient();
 		if(!pClient || !pClient->m_Snap.m_pLocalCharacter)
 			return;
 
@@ -63,8 +61,7 @@ namespace FeatureTargetHud
 		if(!Menu.LocalPos(&MyPos))
 			return;
 
-		const CNetObj_Character *pLocal = pClient->m_Snap.m_pLocalCharacter;
-		vec2 AimDir = vec2((float)pLocal->m_AimX, (float)pLocal->m_AimY);
+		vec2 AimDir = pClient->m_Controls.m_aMousePos[g_Config.m_ClDummy];
 		if(length(AimDir) > 0.01f)
 			AimDir = normalize(AimDir);
 		else
@@ -83,7 +80,6 @@ namespace FeatureTargetHud
 		pGfx->TextureClear();
 		pGfx->QuadsBegin();
 
-		// 1. Траектория от нашего ти до цели (анимированные бегущие точки)
 		const int Steps = std::min(64, std::max(6, (int)(Dist / 16.0f)));
 		const float AnimOffset = fmodf(Now * 3.0f, 1.0f);
 
@@ -94,7 +90,6 @@ namespace FeatureTargetHud
 				continue;
 
 			const vec2 Pt = MyPos + Delta * T;
-			// Градиент от голубого (у нас) к ярко-розовому/красному (у цели)
 			pGfx->SetColor(0.25f + 0.75f * T, 0.75f - 0.5f * T, 1.0f - 0.55f * T, 0.7f);
 
 			const float DotSize = 2.2f + 1.4f * T;
@@ -102,7 +97,6 @@ namespace FeatureTargetHud
 			pGfx->QuadsDrawTL(&Dot, 1);
 		}
 
-		// 2. Специальная MC-обводка вокруг цели (вращающееся кольцо с 4 угловыми скобками)
 		const float RingRadius = 24.0f + sinf(Now * 5.0f) * 1.5f;
 		const int RingPts = 32;
 		for(int i = 0; i < RingPts; i++)
@@ -111,7 +105,6 @@ namespace FeatureTargetHud
 			const float Angle = T * 2.0f * pi + Now * 2.8f;
 			const vec2 Pt = TargetPos + vec2(cosf(Angle), sinf(Angle)) * RingRadius;
 
-			// Перелив цвета как в Nursultan / Celestial HUD
 			const float Glow = 0.5f + 0.5f * sinf(T * 4.0f * pi + Now * 4.0f);
 			pGfx->SetColor(1.0f, 0.25f + 0.55f * Glow, 0.45f + 0.55f * (1.0f - Glow), 0.9f);
 
@@ -120,22 +113,17 @@ namespace FeatureTargetHud
 			pGfx->QuadsDrawTL(&PtQuad, 1);
 		}
 
-		// 4 угловые метки-прицела вокруг врага
 		const float BoxHalf = 21.0f;
 		const float CornerLen = 7.0f;
 		const float Thick = 2.0f;
 		pGfx->SetColor(1.0f, 0.35f, 0.45f, 0.95f);
 
-		// Левый верхний угол
 		IGraphics::CQuadItem C1(TargetPos.x - BoxHalf, TargetPos.y - BoxHalf, CornerLen, Thick);
 		IGraphics::CQuadItem C2(TargetPos.x - BoxHalf, TargetPos.y - BoxHalf, Thick, CornerLen);
-		// Правый верхний угол
 		IGraphics::CQuadItem C3(TargetPos.x + BoxHalf - CornerLen, TargetPos.y - BoxHalf, CornerLen, Thick);
 		IGraphics::CQuadItem C4(TargetPos.x + BoxHalf - Thick, TargetPos.y - BoxHalf, Thick, CornerLen);
-		// Левый нижний угол
 		IGraphics::CQuadItem C5(TargetPos.x - BoxHalf, TargetPos.y + BoxHalf - Thick, CornerLen, Thick);
 		IGraphics::CQuadItem C6(TargetPos.x - BoxHalf, TargetPos.y + BoxHalf - CornerLen, Thick, CornerLen);
-		// Правый нижний угол
 		IGraphics::CQuadItem C7(TargetPos.x + BoxHalf - CornerLen, TargetPos.y + BoxHalf - Thick, CornerLen, Thick);
 		IGraphics::CQuadItem C8(TargetPos.x + BoxHalf - Thick, TargetPos.y + BoxHalf - CornerLen, Thick, CornerLen);
 
@@ -156,7 +144,7 @@ namespace FeatureTargetHud
 		if(!s_Enabled || s_TargetId < 0)
 			return;
 
-		CGameClient *pClient = Menu.m_pClient;
+		CGameClient *pClient = Menu.GameClient();
 		if(!pClient)
 			return;
 
@@ -174,7 +162,6 @@ namespace FeatureTargetHud
 		else
 			s_SmoothDistTiles = DistTiles;
 
-		// Позиция карточки Target HUD (чуть правее и ниже центра экрана)
 		const float W = Menu.ScreenW();
 		const float H = Menu.ScreenH();
 		const float CardW = 112.0f;
@@ -182,28 +169,21 @@ namespace FeatureTargetHud
 		const float CardX = W * 0.5f + 22.0f;
 		const float CardY = H * 0.5f + 14.0f;
 
-		// Подложка карточки с полупрозрачным тёмным фоном
 		Menu.Rect(CardX, CardY, CardW, CardH, 0.07f, 0.08f, 0.11f, 0.82f);
-
-		// Акцентная полоса сверху (градиент-эффект)
 		Menu.Rect(CardX, CardY, CardW, 1.8f, 1.0f, 0.35f, 0.55f, 0.95f);
 
-		// Левый индикатор статуса (зелёный — активен, голубой — заморожен)
 		const bool IsFrozen = (TargetChar.m_Weapon == WEAPON_NINJA);
 		if(IsFrozen)
 			Menu.Rect(CardX + 3.0f, CardY + 5.0f, 3.0f, CardH - 8.0f, 0.3f, 0.85f, 1.0f, 0.95f);
 		else
 			Menu.Rect(CardX + 3.0f, CardY + 5.0f, 3.0f, CardH - 8.0f, 0.3f, 1.0f, 0.5f, 0.95f);
 
-		// Ник игрока
 		Menu.Label(CardX + 9.0f, CardY + 4.0f, 7.2f, Target.m_aName, 1.0f, 1.0f, 1.0f);
 
-		// Дистанция в тайлах + статус
 		char aInfo[64];
 		str_format(aInfo, sizeof(aInfo), "%.1f tiles  %s", s_SmoothDistTiles, IsFrozen ? "[FREEZE]" : "[ACTIVE]");
 		Menu.Label(CardX + 9.0f, CardY + 14.0f, 6.0f, aInfo, 0.8f, 0.85f, 0.95f);
 
-		// Полоска близости (шкала от 0 до 50 тайлов)
 		const float BarX = CardX + 9.0f;
 		const float BarY = CardY + 25.0f;
 		const float BarW = CardW - 14.0f;
