@@ -26,7 +26,7 @@ namespace FeatureFpsOptimizer
 		}
 		else if(s_Saved)
 		{
-			char aBuf;
+			char aBuf[64];
 			str_format(aBuf, sizeof(aBuf), "gfx_high_detail %d", s_OldHighDetail);
 			Menu.Exec(aBuf);
 			str_format(aBuf, sizeof(aBuf), "gfx_finish %d", s_OldGfxFinish);
